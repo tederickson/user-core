@@ -42,10 +42,10 @@ The example response above is the result of calling the API with the username â€
 According to the "Getting Started" document the GitHub API has [rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28).
 Creating a Github token allows more calls per hour.
 
-Follow the instructions to generate a 
+The instructions to generate a 
 [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
-store the token in the application-dev.properties file.
-Make certain you do not commit the change.  Treat the token like your bank password.
+
+It is a future enhancement to use the token found in application-dev.properties within the GitHubClient.
 
 ## Config
 
@@ -93,7 +93,7 @@ The dev profile opens all actuators. The other environments only allow the healt
 
 Use http://localhost:8080/actuator with the dev profile to see all actuator links.
 
-Use "caches" and "caches-cache" to monitor the cache sizes.
+Use "caches" and "caches-cache" to monitor the cache.  Use swagger to verify the call to UserService is cached.
 
 `http://localhost:8080/actuator/caches`
 ```json
@@ -134,3 +134,4 @@ It also prevents a thousand line JUnit test.  The tests are broken out into hand
 See RecipeServiceImpl.java in https://github.com/tederickson/wildfit-server/tree/main/src/main/java/com/wildfit/server/service
 4. The code that talks to GitHub is a unique client.  This allows mocking out the calls to GitHub.  Otherwise CI/CD may exceed the rate limits.
 5. Caching is enabled.  Use swagger to invoke /v1/users/octocat.  Verify the user name is only logged during the first invocation.
+6. Ran out of time to implement the Authorization header in the call to GitHub.
