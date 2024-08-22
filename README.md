@@ -43,14 +43,13 @@ According to the "Getting Started" document the GitHub API has [rate limits](htt
 Creating a Github token allows more calls per hour.
 
 The instructions to generate a 
-[personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+[personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
 
 It is a future enhancement to use the token found in application-dev.properties within the GitHubClient.
 
 ## Config
 
-The application.properties file is stored in Git.  
-The rest are usually local files to prevent leaking sensitive information.
+The application.properties file is stored in Git.
 
 * src/main/resources/application.properties
     * Common configuration values
@@ -58,16 +57,16 @@ The rest are usually local files to prevent leaking sensitive information.
     * Development configuration values
 
 ## Run the Application
-1. Uncomment and provide the personal access token in src/main/resources/application-dev.properties
-2. Run the following command in a terminal window:
-
+Run the following command in a terminal window (or click on the link in IntelliJ):
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 ## Test
-
-run `mvn clean verify -Dspring.profiles.active=dev` to run all JUnit tests.
+Run the following command in a terminal window (or click on the link in IntelliJ) to run all JUnit tests:
+```bash
+mvn clean verify -Dspring.profiles.active=dev
+```
 
 JaCoCo creates the [test coverage reports](./target/site/jacoco/index.html)
 
@@ -93,12 +92,23 @@ The dev profile opens all actuators. The other environments only allow the healt
 
 Use http://localhost:8080/actuator with the dev profile to see all actuator links.
 
-Use "caches" and "caches-cache" to monitor the cache.  Use swagger to verify the call to UserService is cached.
+Use ["caches"](http://localhost:8080/actuator/caches) and 
+["caches-cache"](http://localhost:8080/actuator/caches/users) to monitor the cache.  Use swagger to verify the call to UserService is cached.
 
-`http://localhost:8080/actuator/caches`
 ```json
-{"cacheManagers":{"cacheManager":{"caches":{"users":{"target":"java.util.concurrent.ConcurrentHashMap"}}}}}
+{
+  "cacheManagers": {
+    "cacheManager": {
+      "caches": {
+        "users": {
+          "target": "java.util.concurrent.ConcurrentHashMap"
+        }
+      }
+    }
+  }
+}
 ```
+**Note** the caches do not show up until /v1/users/{username} is invoked.
 
 ## Security
 
@@ -118,8 +128,7 @@ The code is broken up into:
 * exception - the application specific Exceptions
 * controller - the RestControllers which process the URLs that interact with the application
 * domain - the REST request/response domain objects that are converted to JSON
-* mapper - the code that converts a DTO to response objects.  The mappers enforce the Separation of Concerns.  
-A database entity or DTO is never returned to the user.
+* mapper - the code that converts a DTO to response objects.  The mappers enforce the Separation of Concerns.  A database entity or DTO is never returned to the user.
 * service - the business logic
 * client - the client representation of this server.  Allows other microservices to invoke the client methods plus 
 allows integration tests.
@@ -130,8 +139,24 @@ allows integration tests.
 3. If the UserService had more than five operations then I would refactor the methods into handlers. 
 The service invokes the various handlers.
 This prevents merge hell when multiple people are working on the same service.
-It also prevents a thousand line JUnit test.  The tests are broken out into handler specific tests.
+It also prevents a thousand line JUnit test.  The tests are broken out into handler specific JUnit test classes.
 See RecipeServiceImpl.java in https://github.com/tederickson/wildfit-server/tree/main/src/main/java/com/wildfit/server/service
 4. The code that talks to GitHub is a unique client.  This allows mocking out the calls to GitHub.  Otherwise CI/CD may exceed the rate limits.
 5. Caching is enabled.  Use swagger to invoke /v1/users/octocat.  Verify the user name is only logged during the first invocation.
 6. Ran out of time to implement the Authorization header in the call to GitHub.
+7. Domain Objects:
+    * UserDigest - a POJO so that JSON properties map to Java attributes.  Also allows OpenAPI to provide example values.
+    * Repo - a Record because the attributes naturally map to JSON and need no explanation.
+8. Model Objects:
+    * POJOs so that JSON properties map to Java attributes
+    * The GitHub objects are huge, use `@JsonIgnoreProperties(ignoreUnknown = true)` to ignore the majority of properties
+9. Exceptions:
+    * Declare business exceptions that are transformed by ControllerAdvice into appropriate HTTP Status and log informative messages in one place.
+    * Business exceptions extend RuntimeException because they will eventually be caught by ControllerAdvice
+10. Mapper Objects
+    * Enforce Separation of Concerns by mapping internal business objects to public domain objects
+    * Static methods so that streams invoke method references and classes can invoke methods without creating a temporary variable
+11. UserService - standard business methods that
+    1. validate inputs
+    2. execute business rules
+    3. map result to public domain object

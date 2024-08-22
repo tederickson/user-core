@@ -22,12 +22,12 @@ import java.util.List;
 public class UserService {
     private final GitHubClient gitHubClient;
 
-    private static void validate(final String userName) throws InvalidRequestException {
+    private static void validate(final String userName) {
         if (StringUtils.isBlank(userName)) {throw new InvalidRequestException("Missing username");}
     }
 
     @Cacheable("users")
-    public UserDigest getUserByName(final String restUserName) throws InvalidRequestException, NotFoundException {
+    public UserDigest getUserByName(final String restUserName) {
         validate(restUserName);
 
         log.info(restUserName);
@@ -38,7 +38,7 @@ public class UserService {
         try {
             gitHubUser = gitHubClient.getUserByName(userName);
         } catch (HttpClientErrorException.NotFound notFound) {
-            throw new NotFoundException(String.format("User %s not found", userName));
+            throw new NotFoundException(String.format("User '%s' not found", userName));
         }
 
         List<GitHubRepository> repos = gitHubClient.getRepoByName(userName);

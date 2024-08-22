@@ -36,7 +36,7 @@ class UserControllerIT {
     @Test
     void getUserByName_userNotFound() {
         var exception = assertThrows(HttpClientErrorException.NotFound.class, () -> client.getUserByName("The Octocat"));
-        assertThat(exception.getMessage(), containsString("User The Octocat not found"));
+        assertThat(exception.getMessage(), containsString("User 'The Octocat' not found"));
     }
 
     @Test

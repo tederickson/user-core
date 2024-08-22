@@ -46,7 +46,7 @@ class UserServiceTest {
     }
 
     @Test
-    void verifyGitHubCalls() throws NotFoundException, InvalidRequestException {
+    void verifyGitHubCalls() {
         GitHubUser gitHubUser = new GitHubUser();
 
         gitHubUser.setLogin("bob");
