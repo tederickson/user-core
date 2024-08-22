@@ -12,13 +12,11 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.web.client.HttpClientErrorException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class UserServiceTest {
@@ -56,11 +54,11 @@ class UserServiceTest {
         gitHubUser.setHtmlUrl("https://github.com/bob");
 
         when(gitHubClient.getUserByName(anyString())).thenReturn(gitHubUser);
+        when(gitHubClient.getRepoByName(anyString())).thenReturn(null);
 
         UserDigest userDigest = userService.getUserByName("bob");
 
-        verify(gitHubClient).getRepoByName(anyString());
-        assertThat(userDigest.getRepos(), hasSize(0));
+        assertThat(userDigest.getRepos(), is(nullValue()));
 
         assertThat(userDigest.getUserName(), is("bob"));
         assertThat(userDigest.getDisplayName(), is(nullValue()));

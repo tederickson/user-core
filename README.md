@@ -69,7 +69,9 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 run `mvn clean verify -Dspring.profiles.active=dev` to run all JUnit tests.
 
-The current test environment utilizes SpringBootTest, JUnit and Mockito
+JaCoCo creates the [test coverage reports](./target/site/jacoco/index.html)
+
+The current test environment utilizes SpringBootTest, JUnit and Mockito to achieve 100% test coverage.
 
 ### IntelliJ Configuration
 
