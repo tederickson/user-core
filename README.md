@@ -95,6 +95,11 @@ Use http://localhost:8080/actuator with the dev profile to see all actuator link
 
 Use "caches" and "caches-cache" to monitor the cache sizes.
 
+`http://localhost:8080/actuator/caches`
+```json
+{"cacheManagers":{"cacheManager":{"caches":{"users":{"target":"java.util.concurrent.ConcurrentHashMap"}}}}}
+```
+
 ## Security
 
 There are multiple ways to handle making the application secure.
@@ -128,3 +133,4 @@ This prevents merge hell when multiple people are working on the same service.
 It also prevents a thousand line JUnit test.  The tests are broken out into handler specific tests.
 See RecipeServiceImpl.java in https://github.com/tederickson/wildfit-server/tree/main/src/main/java/com/wildfit/server/service
 4. The code that talks to GitHub is a unique client.  This allows mocking out the calls to GitHub.  Otherwise CI/CD may exceed the rate limits.
+5. Caching is enabled.  Use swagger to invoke /v1/users/octocat.  Verify the user name is only logged during the first invocation.

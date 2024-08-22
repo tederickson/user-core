@@ -8,7 +8,9 @@ import com.branch.external.user_core.mapper.UserDigestMapper;
 import com.branch.external.user_core.model.GitHubRepository;
 import com.branch.external.user_core.model.GitHubUser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final GitHubClient gitHubClient;
 
@@ -23,8 +26,11 @@ public class UserService {
         if (StringUtils.isBlank(userName)) {throw new InvalidRequestException("Missing username");}
     }
 
+    @Cacheable("users")
     public UserDigest getUserByName(final String restUserName) throws InvalidRequestException, NotFoundException {
         validate(restUserName);
+
+        log.info(restUserName);
 
         final String userName = restUserName.trim();
 
