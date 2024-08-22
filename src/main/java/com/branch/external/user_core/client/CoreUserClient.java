@@ -12,9 +12,9 @@ public class CoreUserClient {
                 .build();
     }
 
-    public UserDigest getUserByName(final String userName) {
+    public UserDigest getUserByName(final String userName, final int pageNumber, final int pageSize) {
         return restClient.get()
-                .uri("/v1/users/{username}", userName)
+                .uri("/v1/users/{username}?pageNumber={pageNumber}&pageSize={pageSize}", userName, pageNumber, pageSize)
                 .retrieve()
                 .body(UserDigest.class);
     }

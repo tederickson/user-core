@@ -21,6 +21,9 @@ import static org.mockito.Mockito.when;
 
 class UserServiceTest {
     private static final String USER_NAME = "octocat";
+    private static final int PAGE_NUMBER = 1;
+    private static final int PAGE_SIZE = 20;
+
 
     private UserService userService;
     private GitHubClient gitHubClient;
@@ -36,31 +39,42 @@ class UserServiceTest {
         HttpClientErrorException notFound = mock(HttpClientErrorException.NotFound.class);
         when(gitHubClient.getUserByName(USER_NAME)).thenThrow(notFound);
 
-        assertThrows(NotFoundException.class, () -> userService.getUserByName(USER_NAME));
+        assertThrows(NotFoundException.class, () -> userService.getUserByName(USER_NAME, PAGE_NUMBER, PAGE_SIZE));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void getUserByName_invalidName(final String userName) {
-        assertThrows(InvalidRequestException.class, () -> userService.getUserByName(userName));
+        assertThrows(InvalidRequestException.class, () -> userService.getUserByName(userName, PAGE_NUMBER, PAGE_SIZE));
+    }
+
+    @Test
+    void getUserByName_invalidPageNumber() {
+        assertThrows(InvalidRequestException.class, () -> userService.getUserByName(USER_NAME, 0, PAGE_SIZE));
+    }
+
+    @Test
+    void getUserByName_invalidPageSize() {
+        assertThrows(InvalidRequestException.class, () -> userService.getUserByName(USER_NAME, PAGE_NUMBER, 0));
     }
 
     @Test
     void verifyGitHubCalls() {
         GitHubUser gitHubUser = new GitHubUser();
 
-        gitHubUser.setLogin("bob");
+        String userName = "bob";
+        gitHubUser.setLogin(userName);
         gitHubUser.setCreatedAt("2024-08-21T18:44:36Z");
         gitHubUser.setHtmlUrl("https://github.com/bob");
 
         when(gitHubClient.getUserByName(anyString())).thenReturn(gitHubUser);
-        when(gitHubClient.getRepoByName(anyString())).thenReturn(null);
+        when(gitHubClient.getRepoByName(userName, PAGE_NUMBER, PAGE_SIZE)).thenReturn(null);
 
-        UserDigest userDigest = userService.getUserByName("bob");
+        UserDigest userDigest = userService.getUserByName(userName, PAGE_NUMBER, PAGE_SIZE);
 
         assertThat(userDigest.getRepos(), is(nullValue()));
 
-        assertThat(userDigest.getUserName(), is("bob"));
+        assertThat(userDigest.getUserName(), is(userName));
         assertThat(userDigest.getDisplayName(), is(nullValue()));
         assertThat(userDigest.getAvatar(), is(nullValue()));
         assertThat(userDigest.getGeoLocation(), is(nullValue()));

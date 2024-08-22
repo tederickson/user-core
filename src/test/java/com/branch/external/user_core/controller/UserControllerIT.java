@@ -17,10 +17,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerIT {
+    private static final int PAGE_NUMBER = 1;
+    private static final int PAGE_SIZE = 30;
+
     @LocalServerPort
     private int port;
 
     private CoreUserClient client;
+
+    private static void verifyUserInfo(UserDigest userDigest) {
+        assertThat(userDigest.getUserName(), is("octocat"));
+        assertThat(userDigest.getDisplayName(), is("The Octocat"));
+        assertThat(userDigest.getAvatar(), is("https://avatars.githubusercontent.com/u/583231?v=4"));
+        assertThat(userDigest.getGeoLocation(), is("San Francisco"));
+        assertThat(userDigest.getEmail(), is(nullValue()));
+        assertThat(userDigest.getUrl(), is("https://github.com/octocat"));
+        assertThat(userDigest.getCreatedAt(), is("2011-01-25 18:44:36"));
+    }
 
     @BeforeEach
     void setUp() {
@@ -29,27 +42,22 @@ class UserControllerIT {
 
     @Test
     void getUserByName_missingUserName() {
-        var exception = assertThrows(HttpClientErrorException.BadRequest.class, () -> client.getUserByName("   "));
+        var exception = assertThrows(HttpClientErrorException.BadRequest.class, () -> client.getUserByName("   ",
+                                                                                                           PAGE_NUMBER, PAGE_SIZE));
         assertThat(exception.getMessage(), containsString("Missing username"));
     }
 
     @Test
     void getUserByName_userNotFound() {
-        var exception = assertThrows(HttpClientErrorException.NotFound.class, () -> client.getUserByName("The Octocat"));
+        var exception = assertThrows(HttpClientErrorException.NotFound.class, () -> client.getUserByName("The Octocat", PAGE_NUMBER, PAGE_SIZE));
         assertThat(exception.getMessage(), containsString("User 'The Octocat' not found"));
     }
 
     @Test
     void getUserByName() {
-        UserDigest userDigest = client.getUserByName("Octocat");
+        UserDigest userDigest = client.getUserByName("Octocat", PAGE_NUMBER, PAGE_SIZE);
 
-        assertThat(userDigest.getUserName(), is("octocat"));
-        assertThat(userDigest.getDisplayName(), is("The Octocat"));
-        assertThat(userDigest.getAvatar(), is("https://avatars.githubusercontent.com/u/583231?v=4"));
-        assertThat(userDigest.getGeoLocation(), is("San Francisco"));
-        assertThat(userDigest.getEmail(), is(nullValue()));
-        assertThat(userDigest.getUrl(), is("https://github.com/octocat"));
-        assertThat(userDigest.getCreatedAt(), is("2011-01-25 18:44:36"));
+        verifyUserInfo(userDigest);
 
         assertThat(userDigest.getRepos(), hasSize(8));
 
@@ -61,5 +69,23 @@ class UserControllerIT {
                 case "hello-worId" -> assertThat(repo.url(), is("https://github.com/octocat/hello-worId"));
             }
         }
+    }
+
+    @Test
+    void getUserByName_smallSlice() {
+        UserDigest userDigest = client.getUserByName("Octocat", 2, 3);
+
+        verifyUserInfo(userDigest);
+
+        assertThat(userDigest.getRepos(), hasSize(3));
+    }
+
+    @Test
+    void getUserByName_walkOffTheEdge() {
+        UserDigest userDigest = client.getUserByName("Octocat", 27, PAGE_SIZE);
+
+        verifyUserInfo(userDigest);
+
+        assertThat(userDigest.getRepos(), hasSize(0));
     }
 }

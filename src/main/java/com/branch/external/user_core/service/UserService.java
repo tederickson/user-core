@@ -22,15 +22,16 @@ import java.util.List;
 public class UserService {
     private final GitHubClient gitHubClient;
 
-    private static void validate(final String userName) {
+    private static void validate(final String userName, final int pageNumber, final int pageSize) {
         if (StringUtils.isBlank(userName)) {throw new InvalidRequestException("Missing username");}
+        if (pageNumber < 1) {throw new InvalidRequestException("Invalid page number");}
+        if (pageSize < 1) {throw new InvalidRequestException("Invalid page size");}
     }
 
     @Cacheable("users")
-    public UserDigest getUserByName(final String restUserName) {
-        validate(restUserName);
-
-        log.info(restUserName);
+    public UserDigest getUserByName(final String restUserName, final int pageNumber, final int pageSize) {
+        validate(restUserName, pageNumber, pageSize);
+        log.info("restUserName = {}, pageNumber = {}, pageSize = {}", restUserName, pageNumber, pageSize);
 
         final String userName = restUserName.trim();
 
@@ -41,7 +42,7 @@ public class UserService {
             throw new NotFoundException(String.format("User '%s' not found", userName));
         }
 
-        List<GitHubRepository> repos = gitHubClient.getRepoByName(userName);
+        List<GitHubRepository> repos = gitHubClient.getRepoByName(userName, pageNumber, pageSize);
 
         return UserDigestMapper.map(gitHubUser, repos);
     }

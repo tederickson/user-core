@@ -160,3 +160,6 @@ See RecipeServiceImpl.java in https://github.com/tederickson/wildfit-server/tree
     1. validate inputs
     2. execute business rules
     3. map result to public domain object
+12. UserController - the GitHub API defaults pagination to page 1, size 30.
+Any user with more than 30 repositories will not be able to see all repos.
+Added pagination to `/v1/users/{username}` endpoint.

@@ -25,9 +25,9 @@ public class GitHubClient {
                 .body(GitHubUser.class);
     }
 
-    public List<GitHubRepository> getRepoByName(final String userName) {
+    public List<GitHubRepository> getRepoByName(final String userName, final int pageNumber, final int pageSize) {
         return restClient.get()
-                .uri("/users/{username}/repos", userName)
+                .uri("/users/{username}/repos?page={pageNumber}&per_page={pageSize}", userName, pageNumber, pageSize)
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
     }
