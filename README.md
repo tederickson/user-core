@@ -130,23 +130,24 @@ It also prevents a thousand line JUnit test.  The tests are broken out into hand
 See RecipeServiceImpl.java in https://github.com/tederickson/wildfit-server/tree/main/src/main/java/com/wildfit/server/service
 4. The code that talks to GitHub is a unique client.  This allows mocking out the calls to GitHub.  Otherwise CI/CD may exceed the rate limits.
 5. Caching is enabled.  Use swagger to invoke /v1/users/octocat.  Verify the user name is only logged during the first invocation.
-6. Ran out of time to implement the Authorization header in the call to GitHub.
-7. Domain Objects:
+6. Domain Objects:
     * UserDigest - a POJO so that JSON properties map to Java attributes.  Also allows OpenAPI to provide example values.
     * Repo - a Record because the attributes naturally map to JSON and need no explanation.
-8. Model Objects:
+7. Model Objects:
     * POJOs so that JSON properties map to Java attributes
     * The GitHub objects are huge, use `@JsonIgnoreProperties(ignoreUnknown = true)` to ignore the majority of properties
-9. Exceptions:
+8. Exceptions:
     * Declare business exceptions that are transformed by ControllerAdvice into appropriate HTTP Status and log informative messages in one place.
     * Business exceptions extend RuntimeException because they will eventually be caught by ControllerAdvice
-10. Mapper Objects
+9. Mapper Objects
     * Enforce Separation of Concerns by mapping internal business objects to public domain objects
-    * Static methods so that streams invoke method references and classes can invoke methods without creating a temporary variable
-11. UserService - standard business methods that
+    * Static methods so that streams invoke method references and classes can invoke methods without creating a
+      temporary variable
+10. UserService - standard business methods that
     1. validate inputs
     2. execute business rules
     3. map result to public domain object
-12. UserController - the GitHub API defaults pagination to page 1, size 30.
+11. UserController - the GitHub API defaults pagination to page 1, size 30.
 Any user with more than 30 repositories will not be able to see all repos.
 Added pagination to `/v1/users/{username}` endpoint.
+12. Convert the project to a multi-module project to illustrate reusable client and domain jars.
