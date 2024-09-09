@@ -102,6 +102,8 @@ Plus the user-core-api also uses the libraries to implement and integration test
             <artifactId>rest-model-user-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
 </dependency>
+```
+```xml
 <dependency>
             <groupId>com.branch.external</groupId>
             <artifactId>rest-client-user-core</artifactId>
