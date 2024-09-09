@@ -38,48 +38,27 @@ The repository endpoint is located at https://docs.github.com/en/rest/repos/repo
 
 The example response above is the result of calling the API with the username “octocat”. The data is merged after calling the two APIs.
 
-## GitHub API Rate Limits
-According to the "Getting Started" document the GitHub API has [rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28).
-Creating a Github token allows more calls per hour.
-
-The instructions to generate a 
-[personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
-
-It is a future enhancement to use the token found in application-dev.properties within the GitHubClient.
-
 ## Config
 
 The application.properties file is stored in Git.
 
 * src/main/resources/application.properties
     * Common configuration values
-* src/main/resources/application-dev.properties
-    * Development configuration values
+
 
 ## Run the Application
 Run the following command in a terminal window (or click on the link in IntelliJ):
 ```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+mvn spring-boot:run
 ```
 
 ## Test
 Run the following command in a terminal window (or click on the link in IntelliJ) to run all JUnit tests:
 ```bash
-mvn clean verify -Dspring.profiles.active=dev
+mvn clean verify
 ```
 
-JaCoCo creates the [test coverage reports](./target/site/jacoco/index.html)
-
 The current test environment utilizes SpringBootTest, JUnit and Mockito to achieve 100% test coverage.
-
-### IntelliJ Configuration
-
-Edit the JUnit test configuration so that tests automatically add the active Spring profile:
-
-1. Click on "Edit Configurations"
-2. Click on "Edit configuration templates ..."
-3. Chose JUnit
-4. Add "spring.profiles.active=dev" to the environment variables
 
 ## OpenApi 3.0 (Swagger)
 
@@ -110,28 +89,34 @@ Use ["caches"](http://localhost:8080/actuator/caches) and
 ```
 **Note** the caches do not show up until /v1/users/{username} is invoked.
 
-## Security
-
-There are multiple ways to handle making the application secure.
-
-* Use [Spring Boot security](https://spring.io/guides/gs/securing-web)
-* The UI could talk to Firebase to handle user authentication
-* Use OAuth or SAML
-* Grovel before Google and choose a different option
-
-The only security concerns at this time is protecting the personal access token.
 
 ## Architecture
-The code is broken up into:
-* config - almost all the stuff needed to run the app
-* model - the DTO (Data Transfer Objects) that talk to the GitHub API
-* exception - the application specific Exceptions
+This is a multi-module project so that other microservices can pull in the
+* rest-model-user-core - the REST request/response domain objects that are converted to JSON
+* rest-client-user-core - the client representation of this server
+
+Plus the user-core-api also uses the libraries to implement and integration test the core api.
+```xml
+<dependency>
+            <groupId>com.branch.external</groupId>
+            <artifactId>rest-model-user-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+</dependency>
+<dependency>
+            <groupId>com.branch.external</groupId>
+            <artifactId>rest-client-user-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+</dependency>
+```
+
+The user-core-api code is broken up into:
+* client - the GitHub client used to invoke the GitHub REST endpoints
+* configuration - the Swagger configuration
 * controller - the RestControllers which process the URLs that interact with the application
-* domain - the REST request/response domain objects that are converted to JSON
+* exception - the application specific Exceptions
 * mapper - the code that converts a DTO to response objects.  The mappers enforce the Separation of Concerns.  A database entity or DTO is never returned to the user.
+* model - the DTO (Data Transfer Objects) that talk to the GitHub API
 * service - the business logic
-* client - the client representation of this server.  Allows other microservices to invoke the client methods plus 
-allows integration tests.
 
 ## Decisions
 1. Always enforce Separation of Concerns
