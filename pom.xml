@@ -22,7 +22,8 @@
     </properties>
 
     <modules>
-        <module>api</module>
         <module>rest-model-user-core</module>
+        <module>rest-client-user-core</module>
+        <module>api</module>
     </modules>
 </project>

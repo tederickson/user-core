@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>user-core-api</artifactId>
+    <artifactId>rest-client-user-core</artifactId>
 
     <packaging>jar</packaging>
 
@@ -16,11 +16,6 @@
         <dependency>
             <groupId>com.branch.external</groupId>
             <artifactId>rest-model-user-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.branch.external</groupId>
-            <artifactId>rest-client-user-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
