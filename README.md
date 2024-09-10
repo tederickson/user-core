@@ -120,6 +120,13 @@ The user-core-api code is broken up into:
 * model - the DTO (Data Transfer Objects) that talk to the GitHub API
 * service - the business logic
 
+### Update Multi-Module Versions
+The version in all four poms must be the same value.  Instead of manually updating the poms, run
+```bash
+mvn build-helper:parse-version versions:set -DnewVersion=0.1.1-SNAPSHOT -DgenerateBackupPoms=false
+```
+
+
 ## Decisions
 1. Always enforce Separation of Concerns
 2. Validate inputs
