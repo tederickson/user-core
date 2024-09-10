@@ -49,7 +49,7 @@ The application.properties file is stored in Git.
 ## Run the Application
 Run the following command in a terminal window (or click on the link in IntelliJ):
 ```bash
-mvn spring-boot:run
+mvn -pl api spring-boot:run
 ```
 
 ## Test
