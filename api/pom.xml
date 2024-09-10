@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.branch.external</groupId>
         <artifactId>user-core</artifactId>
-        <version>0.1.4-SNAPSHOT</version>
+        <version>0.1.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>user-core-api</artifactId>
@@ -36,16 +36,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -55,22 +55,11 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
-        </dependency>
-
-        <dependency>
-            <!-- https://hamcrest.org/JavaHamcrest/distributables
-            Warning: Maven users should declare a dependency upon hamcrest-library before other dependencies,
-            otherwise the older version will take precedence.
-            -->
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>2.2</version>
             <scope>test</scope>
         </dependency>
-       
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
