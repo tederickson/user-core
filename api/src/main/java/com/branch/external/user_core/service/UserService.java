@@ -39,7 +39,7 @@ public class UserService {
         try {
             gitHubUser = gitHubClient.getUserByName(userName);
         } catch (HttpClientErrorException.NotFound notFound) {
-            throw new NotFoundException(String.format("User '%s' not found", userName));
+            throw new NotFoundException("User '%s' not found".formatted(userName));
         }
 
         List<GitHubRepository> repos = gitHubClient.getRepoByName(userName, pageNumber, pageSize);
