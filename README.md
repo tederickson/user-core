@@ -185,5 +185,7 @@ mvn build-helper:parse-version versions:set -DnewVersion=0.1.1-SNAPSHOT -Dgenera
 
 1. Migrate to [Java 21](https://docs.openrewrite.org/recipes/java/migrate/upgradetojava21)
 2. [Spring Boot End of Life](https://endoflife.date/spring-boot)
-3. Migrate to [Spring Boot 2.7](https://docs.openrewrite.org/recipes/java/spring/boot2/springbootproperties_2_7)
-4. Migrate to [Spring Boot 3.5](https://docs.openrewrite.org/recipes/java/spring/boot3/upgradespringboot_3_5-community-edition)
+3. Migrate
+   to [Spring Boot 3.5](https://docs.openrewrite.org/recipes/java/spring/boot3/upgradespringboot_3_5-community-edition)
+4. Migrate
+   to [Spring Boot 4](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition)
